@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'phonenumber_field',
 
     'medicos',
-    'especialidades',
 ]
 
 if DEBUG:

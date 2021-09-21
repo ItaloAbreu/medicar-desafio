@@ -3,8 +3,11 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
-from especialidades.models import Especialidade
 from medicar.utils import SIGLA_ESTADOS
+
+
+class Especialidade(models.Model):
+    nome = models.CharField(max_length=120)
 
 
 def validar_crm(value: str) -> None:
