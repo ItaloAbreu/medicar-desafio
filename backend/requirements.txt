@@ -1,5 +1,7 @@
 Django==3.2.7
 phonenumbers==8.12.31
 django-phonenumber-field==5.2.0
-django-extensions==3.1.3
 psycopg2-binary==2.9.1
+
+django-extensions==3.1.3
+Werkzeug==2.0.1
