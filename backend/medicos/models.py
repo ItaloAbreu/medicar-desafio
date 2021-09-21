@@ -9,6 +9,9 @@ from medicar.utils import SIGLA_ESTADOS
 class Especialidade(models.Model):
     nome = models.CharField(max_length=120)
 
+    def __str__(self) -> str:
+        return self.nome
+
 
 def validar_crm(value: str) -> None:
     """
@@ -38,3 +41,6 @@ class Medico(models.Model):
     especialidade = models.ForeignKey(Especialidade,
                                       on_delete=models.PROTECT,
                                       null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f'{self.nome} (CRM: {self.crm})'
