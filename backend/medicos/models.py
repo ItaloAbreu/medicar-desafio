@@ -13,7 +13,7 @@ class Especialidade(models.Model):
         return self.nome
 
 
-def validar_crm(value: str) -> None:
+def validate_crm(value: str) -> None:
     """
     CRM é formado somente por números seguido da Sigla do Estado
     Ex: 0000/CE minímo 4 dígitos ou 0000000000/CE máximo 10 dígitos
@@ -35,9 +35,9 @@ def validar_crm(value: str) -> None:
 
 class Medico(models.Model):
     nome = models.CharField(max_length=240)
-    crm = models.CharField(max_length=13, validators=[validar_crm])
-    email = models.EmailField()
-    telefone = PhoneNumberField()
+    crm = models.CharField(max_length=13, validators=[validate_crm])
+    email = models.EmailField(null=True, blank=True)
+    telefone = PhoneNumberField(null=True, blank=True)
     especialidade = models.ForeignKey(Especialidade,
                                       on_delete=models.PROTECT,
                                       null=True, blank=True)
