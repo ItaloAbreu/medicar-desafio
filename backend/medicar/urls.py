@@ -16,12 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
+from medicos.routers import router as router_medicos
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('rest_auth/registration/', include('rest_auth.registration.urls'))
+    path('rest_auth/registration/', include('rest_auth.registration.urls')),
 ]
+
+urlpatterns += router_medicos.urls
 
 admin.site.index_title = 'Medicar'
 admin.site.site_header = 'Administração Medicar'

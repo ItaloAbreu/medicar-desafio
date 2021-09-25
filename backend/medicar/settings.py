@@ -37,13 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'rest_framework',
     'rest_framework.authtoken',
     'allauth',
     'allauth.account',
-    'rest_auth'
-    'rest_auth.registration'
+    'rest_auth',
+    'rest_auth.registration',
     'phonenumber_field',
 
     'medicos',
@@ -52,6 +53,8 @@ INSTALLED_APPS = [
 
 if DEBUG:
     INSTALLED_APPS.append('django_extensions')
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
