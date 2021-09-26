@@ -21,7 +21,7 @@ from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import TokenProxy
 from allauth.account.models import EmailAddress
 from medicos.routers import router as router_medicos
-
+from consultas.routers import router as router_consultas
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +30,7 @@ urlpatterns = [
 ]
 
 urlpatterns += router_medicos.urls
+urlpatterns += router_consultas.urls
 
 
 admin.site.index_title = 'Medicar'

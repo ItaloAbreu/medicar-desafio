@@ -13,6 +13,7 @@ def date_in_the_past(value) -> None:
             params={'value': value},
         )
 
+
 class Agenda(models.Model):
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE)
     dia = models.DateField(validators=[date_in_the_past])
@@ -42,7 +43,12 @@ class Consulta(models.Model):
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE)
     dia = models.DateField()
     horario = models.TimeField()
-    data_agendamento = models.DateTimeField(auto_created=True)
+    data_agendamento = models.DateTimeField(
+        auto_created=True, auto_now_add=True, editable=False,
+        null=True, blank=True)
+    
+    class Meta:
+        ordering = ['dia', 'horario']
 
     def __str__(self) -> str:
         return '{dia} {horario} com {medico}'.format(
