@@ -16,7 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
+from django.contrib.sites.models import Site
+from django.contrib.auth.models import Group
+from rest_framework.authtoken.models import TokenProxy
+from allauth.account.models import EmailAddress
 from medicos.routers import router as router_medicos
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +31,11 @@ urlpatterns = [
 
 urlpatterns += router_medicos.urls
 
+
 admin.site.index_title = 'Medicar'
 admin.site.site_header = 'Administração Medicar'
 admin.site.site_title = 'Administração Medicar'
+admin.site.unregister(Group)
+admin.site.unregister(Site)
+admin.site.unregister(TokenProxy)
+admin.site.unregister(EmailAddress)
