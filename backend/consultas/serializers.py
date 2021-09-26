@@ -4,9 +4,17 @@ from medicos.serializers import MedicoSerializer
 
 
 class ConsultaSerializer(serializers.HyperlinkedModelSerializer):
-    medico = MedicoSerializer(read_only=True)
+    medico = serializers.SerializerMethodField()
+    dia = serializers.SerializerMethodField()
     horario = serializers.TimeField(format='%H:%M')
 
     class Meta:
         model = Consulta
         fields = ['id', 'dia', 'horario', 'data_agendamento', 'medico']
+
+    def get_medico(self, instance):
+        serializer = MedicoSerializer(instance.agenda.medico, context=self.context)
+        return serializer.data
+
+    def get_dia(self, instance):
+        return instance.agenda.dia

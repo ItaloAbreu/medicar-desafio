@@ -40,15 +40,14 @@ class HorarioAgenda(models.Model):
 
 
 class Consulta(models.Model):
-    medico = models.ForeignKey(Medico, on_delete=models.CASCADE)
-    dia = models.DateField()
+    agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)
     horario = models.TimeField()
     data_agendamento = models.DateTimeField(
         auto_created=True, auto_now_add=True, editable=False)
 
     def __str__(self) -> str:
         return '{dia} {horario} com {medico}'.format(
-            dia=self.dia,
+            dia=self.agenda.dia,
             horario=self.horario,
-            medico=self.medico,
+            medico=self.agenda.medico,
         )

@@ -9,7 +9,7 @@ class ConsultaViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         now = timezone.localtime()
-        return Consulta.objects.filter(dia__gte=now).exclude(
-            dia=now, horario__hour__lte=now.hour,
+        return Consulta.objects.filter(agenda__dia__gte=now).exclude(
+            agenda__dia=now, horario__hour__lte=now.hour,
             horario__minute__lte=now.minute).order_by(
-                'dia', 'horario')
+                'agenda__dia', 'horario')
