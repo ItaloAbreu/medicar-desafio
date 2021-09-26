@@ -44,11 +44,7 @@ class Consulta(models.Model):
     dia = models.DateField()
     horario = models.TimeField()
     data_agendamento = models.DateTimeField(
-        auto_created=True, auto_now_add=True, editable=False,
-        null=True, blank=True)
-    
-    class Meta:
-        ordering = ['dia', 'horario']
+        auto_created=True, auto_now_add=True, editable=False)
 
     def __str__(self) -> str:
         return '{dia} {horario} com {medico}'.format(

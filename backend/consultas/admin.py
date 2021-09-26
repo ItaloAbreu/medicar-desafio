@@ -1,5 +1,5 @@
 from django.contrib import admin
-from consultas.models import Agenda, HorarioAgenda 
+from consultas.models import Agenda, HorarioAgenda
 
 
 class HorarioAgendaInline(admin.StackedInline):
@@ -13,4 +13,3 @@ class HorarioAgendaInline(admin.StackedInline):
 class AgendaAdmin(admin.ModelAdmin):
     fields = ('medico', 'dia',)
     inlines = [HorarioAgendaInline]
-

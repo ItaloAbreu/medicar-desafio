@@ -11,4 +11,5 @@ class ConsultaViewSet(viewsets.ReadOnlyModelViewSet):
         now = timezone.localtime()
         return Consulta.objects.filter(dia__gte=now).exclude(
             dia=now, horario__hour__lte=now.hour,
-            horario__minute__lte=now.minute)
+            horario__minute__lte=now.minute).order_by(
+                'dia', 'horario')
