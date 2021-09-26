@@ -1,5 +1,6 @@
-from django.db import models
 from datetime import date
+from django.db import models
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from medicos.models import Medico
@@ -27,10 +28,19 @@ class Agenda(models.Model):
             dia=self.dia,
         )
 
+    def horarios_disponiveis(self):
+        now = timezone.localtime()
+        return self.horarioagenda_set.filter(agenda=self, disponivel=True).exclude(
+            agenda__dia=now,
+            horario__hour__lte=now.hour,
+            horario__minute__lte=now.minute
+        )
+
 
 class HorarioAgenda(models.Model):
     agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)
     horario = models.TimeField()
+    disponivel = models.BooleanField(default=True, null=True, blank=True)
 
     class Meta:
         unique_together = ('horario', 'agenda')

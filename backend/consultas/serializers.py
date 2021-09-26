@@ -1,7 +1,5 @@
-from django.db.models import query
 from rest_framework import serializers
 from consultas.models import Consulta
-from consultas.models import HorarioAgenda
 from consultas.models import Agenda
 from medicos.serializers import MedicoSerializer
 
@@ -33,7 +31,8 @@ class AgendaSerializer(serializers.ModelSerializer):
         fields = ['id', 'medico', 'dia', 'horarios']
 
     def get_horarios(self, instance):
-        queryset = HorarioAgenda.objects.filter(agenda=instance)
+        queryset = instance.horarios_disponiveis()
         horarios = queryset.values_list('horario', flat=True)
-        field = serializers.ListField(child=serializers.TimeField(format='%H:%M'))
+        field = serializers.ListField(
+            child=serializers.TimeField(format='%H:%M'))
         return field.to_representation(horarios)

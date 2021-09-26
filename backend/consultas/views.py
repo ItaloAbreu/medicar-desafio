@@ -47,4 +47,7 @@ class AgendaViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         now = timezone.localtime()
-        return Agenda.objects.filter(dia__gte=now).order_by('dia')
+        queryset = Agenda.objects.filter(dia__gte=now).order_by('dia')
+        ids_to_exlude = [
+            agenda.id for agenda in queryset if not agenda.horarios_disponiveis()]
+        return queryset.exclude(id__in=ids_to_exlude)
