@@ -62,12 +62,43 @@ class Consulta(models.Model):
         auto_created=True, auto_now_add=True, editable=False)
 
     def rn_criar_em_dia_passado(self):
-        now = date.today()
-        if self.agenda.dia < now:
+        today = date.today()
+        if self.agenda.dia < today:
+            return False
+        return True
+
+    def rn_criar_em_horario_passado(self):
+        today = date.today()
+        now = timezone.localtime()
+        if self.agenda.dia == today and (self.horario.hour < now.hour
+                                         or (self.horario.hour == now.hour
+                                             and self.horario.minute <= now.minute)):
+            return False
+        return True
+
+    def rn_usuario_agendado_em_dia_hora(self):
+        consulta = Consulta.objects.filter(
+            usuario=self.usuario, horario=self.horario, agenda__dia=self.agenda.dia)
+        return not consulta.exists()
+
+    def rn_dia_horario_disponveis(self):
+        horarioagenda = HorarioAgenda.objects.filter(
+            horario=self.horario, agenda=self.agenda, disponivel=True)
+        return horarioagenda.exists()
+
+    def clean(self):
+        if not self.rn_criar_em_dia_passado():
             raise ValidationError(
-            _("Não é possível criar uma consulta em um dia passado."),
-            params={'value': self.agenda.dia},
-        )
+                "Não é possível agendar uma consulta em um dia passado.")
+        if not self.rn_criar_em_horario_passado():
+            raise ValidationError(
+                "Não é possível agendar uma consulta em um horário passado.")
+        if not self.rn_usuario_agendado_em_dia_hora():
+            raise ValidationError(
+                "Usuário já está agendado para esse dia e horário.")
+        if not self.rn_dia_horario_disponveis():
+            raise ValidationError(
+                "Horário da agenda não está disponível.")
 
     def __str__(self) -> str:
         return '{dia} {horario} com {medico}'.format(

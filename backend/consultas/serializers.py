@@ -16,6 +16,11 @@ class ConsultaSerializer(serializers.ModelSerializer):
         fields = ['id', 'agenda_id', 'usuario_id', 'dia',
                   'horario', 'data_agendamento', 'medico']
 
+    def validate(self, attrs):
+        instance = Consulta(**attrs)
+        instance.clean()
+        return attrs
+
     def get_medico(self, instance):
         serializer = MedicoSerializer(
             instance.agenda.medico, context=self.context)
