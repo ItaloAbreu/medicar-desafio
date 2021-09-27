@@ -1,8 +1,12 @@
 from datetime import date
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.db.models.signals import post_save
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from medicos.models import Medico
 
 
@@ -52,8 +56,18 @@ class HorarioAgenda(models.Model):
 class Consulta(models.Model):
     agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE)
     horario = models.TimeField()
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     data_agendamento = models.DateTimeField(
         auto_created=True, auto_now_add=True, editable=False)
+
+    def rn_criar_em_dia_passado(self):
+        now = date.today()
+        if self.agenda.dia < now:
+            raise ValidationError(
+            _("Não é possível criar uma consulta em um dia passado."),
+            params={'value': self.agenda.dia},
+        )
 
     def __str__(self) -> str:
         return '{dia} {horario} com {medico}'.format(
@@ -61,3 +75,24 @@ class Consulta(models.Model):
             horario=self.horario,
             medico=self.agenda.medico,
         )
+
+
+def alterar_disponibilidade_horarioagenda(consulta, disponibilidade):
+    horarioagenda = HorarioAgenda.objects.filter(
+        agenda=consulta.agenda, horario=consulta.horario).first()
+    if not horarioagenda:
+        return
+    horarioagenda.disponivel = disponibilidade
+    horarioagenda.save()
+
+
+@receiver(post_save, sender=Consulta)
+def indisponibilizar_horarioagenda(instance, created, *args, **kwargs):
+    if not created:
+        return
+    alterar_disponibilidade_horarioagenda(instance, False)
+
+
+@receiver(post_delete, sender=Consulta)
+def disponibilizar_horarioagenda(instance, *args, **kwargs):
+    alterar_disponibilidade_horarioagenda(instance, True)

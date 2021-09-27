@@ -1,5 +1,6 @@
 from django.utils import timezone
 from rest_framework import viewsets
+from rest_framework.exceptions import PermissionDenied
 from django_filters import FilterSet
 from django_filters import DateFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -11,7 +12,7 @@ from consultas.models import Consulta
 from consultas.models import Agenda
 
 
-class ConsultaViewSet(viewsets.ReadOnlyModelViewSet):
+class ConsultaViewSet(viewsets.ModelViewSet):
     serializer_class = ConsultaSerializer
 
     def get_queryset(self):
@@ -20,6 +21,25 @@ class ConsultaViewSet(viewsets.ReadOnlyModelViewSet):
             agenda__dia=now, horario__hour__lte=now.hour,
             horario__minute__lte=now.minute).order_by(
                 'agenda__dia', 'horario')
+
+    def create(self, request, *args, **kwargs):
+        if hasattr(request.data, '_mutable'):
+            _mutable = request.data._mutable
+            request.data._mutable = True
+        request.data['usuario_id'] = request.user.id
+        if hasattr(request.data, '_mutable'):
+            request.data._mutable = _mutable
+        return super().create(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        #TODO
+        return super().destroy(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        raise PermissionDenied()
+
+    def partial_update(self, request, *args, **kwargs):
+        raise PermissionDenied()
 
 
 class AgendaFilterSet(FilterSet):

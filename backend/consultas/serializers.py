@@ -5,13 +5,16 @@ from medicos.serializers import MedicoSerializer
 
 
 class ConsultaSerializer(serializers.ModelSerializer):
-    medico = serializers.SerializerMethodField()
-    dia = serializers.SerializerMethodField()
+    medico = serializers.SerializerMethodField(read_only=True)
+    dia = serializers.SerializerMethodField(read_only=True)
     horario = serializers.TimeField(format='%H:%M')
+    agenda_id = serializers.IntegerField(write_only=True)
+    usuario_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Consulta
-        fields = ['id', 'dia', 'horario', 'data_agendamento', 'medico']
+        fields = ['id', 'agenda_id', 'usuario_id', 'dia',
+                  'horario', 'data_agendamento', 'medico']
 
     def get_medico(self, instance):
         serializer = MedicoSerializer(
@@ -23,7 +26,7 @@ class ConsultaSerializer(serializers.ModelSerializer):
 
 
 class AgendaSerializer(serializers.ModelSerializer):
-    medico = MedicoSerializer()
+    medico = MedicoSerializer(read_only=True)
     horarios = serializers.SerializerMethodField()
 
     class Meta:
