@@ -61,13 +61,13 @@ class Consulta(models.Model):
     data_agendamento = models.DateTimeField(
         auto_created=True, auto_now_add=True, editable=False)
 
-    def rn_criar_em_dia_passado(self):
+    def rn_dia_passado(self):
         today = date.today()
         if self.agenda.dia < today:
             return False
         return True
 
-    def rn_criar_em_horario_passado(self):
+    def rn_horario_passado(self):
         today = date.today()
         now = timezone.localtime()
         if self.agenda.dia == today and (self.horario.hour < now.hour
@@ -87,10 +87,10 @@ class Consulta(models.Model):
         return horarioagenda.exists()
 
     def clean(self):
-        if not self.rn_criar_em_dia_passado():
+        if not self.rn_dia_passado():
             raise ValidationError(
                 "Não é possível agendar uma consulta em um dia passado.")
-        if not self.rn_criar_em_horario_passado():
+        if not self.rn_horario_passado():
             raise ValidationError(
                 "Não é possível agendar uma consulta em um horário passado.")
         if not self.rn_usuario_agendado_em_dia_hora():

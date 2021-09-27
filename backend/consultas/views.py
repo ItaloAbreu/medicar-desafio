@@ -1,10 +1,11 @@
-from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
+from django.utils import timezone
 from django_filters import FilterSet
 from django_filters import DateFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.forms.fields import IntegerField
+from django.shortcuts import get_object_or_404
 from medicar.utils import MultipleValueFilter
 from consultas.serializers import ConsultaSerializer
 from consultas.serializers import AgendaSerializer
@@ -31,8 +32,14 @@ class ConsultaViewSet(viewsets.ModelViewSet):
             request.data._mutable = _mutable
         return super().create(request, *args, **kwargs)
 
-    def destroy(self, request, *args, **kwargs):
-        #TODO
+    def destroy(self, request, pk, *args, **kwargs):
+        instance = get_object_or_404(Consulta, pk=pk)
+        if request.user.id != instance.usuario.id:
+            raise PermissionDenied(
+                'Não é possível desmarcar uma consulta que não foi marcada pelo usuário logado.')
+        if not instance.rn_horario_passado():
+            raise PermissionDenied(
+                'Não é possivel desmarcar uma consulta que já aconteceu.')
         return super().destroy(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
