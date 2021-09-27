@@ -2,6 +2,8 @@
 
 Sistema para gestão de consultas em uma clínica médica.
 
+Link para o desafio com tadas as especificações [aqui](https://github.com/Intmed-Software/desafio).
+
 ## Api de Autenticação
 
 ### Registro de Usuário
